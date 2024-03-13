@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -30,18 +32,24 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class BlankFragment : Fragment(){
 
+    private lateinit var textView: TextView
+    private lateinit var frameLayout: FrameLayout
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val root = inflater.inflate(R.layout.fragment_blank, container, false)
 
-        return inflater.inflate(R.layout.fragment_blank, container, false)
+        textView = root.findViewById(R.id.textViewPersonajes)
+        frameLayout = root.findViewById(R.id.frameLayoutImagen)
+        llamaDisney()
+        return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        llamaDisney()
     }
 
     fun llamaDisney(){
@@ -58,18 +66,29 @@ class BlankFragment : Fragment(){
                 /*Necesitamos permiso de internet en el manifest, para poder acceder a la web de rutas*/
                 Log.i("PEPE TENGO PERSONAJES", "OK")
                 // withContext(Dispatchers.Main) {
-                activity?.runOnUiThread{
-                    Toast.makeText(requireContext(),"Llamada dentro de la corrutina exisoto", Toast.LENGTH_SHORT).show()
-                }
-                val pepe = listarPersonajes(llamada.body())
+                val data = llamada.body()?.data
+
+                listarPersonajes(data)
+
             }else{
                 Log.i("PEPE TENGO PERSONAJES:","NO")
             }
         }//FIN DE LA CORRUTINA
+
     }
 
-    private fun listarPersonajes(body: PersonajesResponse?):Boolean {
-    return true
+    fun listarPersonajes(valores: List<Data>?){
+
+        val stringBuilder = StringBuilder()
+        if (valores != null) {
+            valores.forEach { pepe ->
+                stringBuilder.append("Personaje: ${pepe.name} \n")
+            }
+        }
+        // withContext(Dispatchers.Main) {
+        activity?.runOnUiThread {
+            textView.text = stringBuilder.toString()
+        }
     }
 
     fun getRetrofit(): Retrofit {
@@ -77,5 +96,11 @@ class BlankFragment : Fragment(){
             .baseUrl("https://api.disneyapi.dev/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+
+    private fun mostrarImagen(imageUrl: String) {
+        // Aquí cargarías la imagen desde la URL y la mostrarías en un ImageView dentro del FrameLayout
+        // Por simplicidad, aquí solo imprimimos la URL
+        Log.i("Imagen URL:", imageUrl)
     }
 }

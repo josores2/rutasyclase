@@ -11,11 +11,5 @@
         android:layout_height="match_parent" >
 
     </FrameLayout>
-    <Button
-        android:id="@+id/botonRuta1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:text="Ruta a La Malvarrosa" />
+
 </RelativeLayout>
